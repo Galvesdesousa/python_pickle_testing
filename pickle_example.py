@@ -1,6 +1,10 @@
 import pickle
+import csv
+import os
 
 def salvar_produtos(produtos):
+    if os.path.exists('produtos.pickle'):
+        limpar_arquivo()
     with open('produtos.pickle', 'wb') as arquivo:
         pickle.dump(produtos, arquivo)
     print("Produtos salvos com sucesso!")
@@ -29,13 +33,36 @@ def listar_produtos(produtos):
     else:
         print("Nenhum produto na lista.")
 
+def limpar_arquivo():
+    with open('produtos.pickle', 'wb') as arquivo:
+        arquivo.truncate(0)
+    print("Arquivo limpo com sucesso!")
+
+def eliminar_arquivo():
+    if os.path.exists('produtos.pickle'):
+        os.remove('produtos.pickle')
+        print("Arquivo eliminado com sucesso!")
+    else:
+        print("Arquivo não encontrado.")
+
+def exportar_para_csv(produtos):
+    with open('produtos.csv', 'w', newline='') as arquivo_csv:
+        escritor = csv.DictWriter(arquivo_csv, fieldnames=['nome', 'preco'])
+        escritor.writeheader()
+        for produto in produtos:
+            escritor.writerow(produto)
+    print("Produtos exportados para CSV com sucesso!")
+
 def menu():
     print("\n### Menu ###")
     print("1. Adicionar Produto")
     print("2. Listar Produtos")
     print("3. Salvar Produtos")
     print("4. Carregar Produtos")
-    print("5. Sair")
+    print("5. Limpar Arquivo")
+    print("6. Eliminar Arquivo")
+    print("7. Exportar para CSV")
+    print("8. Sair")
 
     escolha = input("Escolha uma opção: ")
     return escolha
@@ -53,6 +80,12 @@ if __name__ == "__main__":
         elif escolha == "4":
             produtos = carregar_produtos()
         elif escolha == "5":
+            limpar_arquivo()
+        elif escolha == "6":
+            eliminar_arquivo()
+        elif escolha == "7":
+            exportar_para_csv(produtos)
+        elif escolha == "8":
             print("Saindo...")
             break
         else:
